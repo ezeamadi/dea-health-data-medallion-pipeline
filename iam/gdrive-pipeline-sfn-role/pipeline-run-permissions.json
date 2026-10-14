@@ -1,0 +1,28 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InvokeIngestLambda",
+      "Effect": "Allow",
+      "Action": "lambda:InvokeFunction",
+      "Resource": [
+        "arn:aws:lambda:*:<ACCOUNT_ID>:function:gdrive-ingest",
+        "arn:aws:lambda:*:<ACCOUNT_ID>:function:gdrive-ingest:*"
+      ]
+    },
+    {
+      "Sid": "RunGlueJobs",
+      "Effect": "Allow",
+      "Action": [
+        "glue:StartJobRun",
+        "glue:GetJobRun",
+        "glue:GetJobRuns",
+        "glue:BatchStopJobRun"
+      ],
+      "Resource": [
+        "arn:aws:glue:*:<ACCOUNT_ID>:job/silver-build",
+        "arn:aws:glue:*:<ACCOUNT_ID>:job/gold-build"
+      ]
+    }
+  ]
+}

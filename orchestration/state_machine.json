@@ -1,0 +1,126 @@
+{
+  "Comment": "Daily Google Drive to Silver to Gold pipeline, with failure email",
+  "StartAt": "IngestFromDrive",
+  "States": {
+    "IngestFromDrive": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "gdrive-ingest",
+        "Payload": {}
+      },
+      "ResultSelector": {
+        "ingested_count.$": "$.Payload.ingested_count",
+        "skipped_count.$": "$.Payload.skipped_count",
+        "ingested.$": "$.Payload.ingested"
+      },
+      "ResultPath": "$.ingest",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 2,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "CheckForNewFiles"
+    },
+    "CheckForNewFiles": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.ingest.ingested_count",
+          "NumericGreaterThan": 0,
+          "Next": "BuildSilver"
+        }
+      ],
+      "Default": "NothingNew"
+    },
+    "NothingNew": {
+      "Type": "Succeed"
+    },
+    "BuildSilver": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "silver-build",
+        "Arguments": {
+          "--DATASET": "ALL"
+        }
+      },
+      "TimeoutSeconds": 3600,
+      "ResultPath": "$.silver",
+      "Retry": [
+        {
+          "ErrorEquals": ["Glue.ConcurrentRunsExceededException"],
+          "IntervalSeconds": 120,
+          "MaxAttempts": 3,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "BuildGold"
+    },
+    "BuildGold": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "gold-build",
+        "Arguments": {
+          "--TABLES": "gold_staffing_daily,gold_staffing_facility_monthly,gold_staffing_state_monthly,gold_staffing_state_ownership,gold_facility_quality_staffing,gold_relationship_stats"
+        }
+      },
+      "TimeoutSeconds": 3600,
+      "ResultPath": "$.gold",
+      "Retry": [
+        {
+          "ErrorEquals": ["Glue.ConcurrentRunsExceededException"],
+          "IntervalSeconds": 120,
+          "MaxAttempts": 3,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "NotifyFailure"
+        }
+      ],
+      "End": true
+    },
+    "NotifyFailure": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:us-east-1:<ACCOUNT_ID>:google-api-pipeline-alert",
+        "Subject": "Pipeline FAILED: gdrive-medallion-pipeline",
+        "Message.$": "States.Format('Execution {} failed. Error: {}. Cause: {}', $$.Execution.Name, $.error.Error, $.error.Cause)"
+      },
+      "Next": "PipelineFailed"
+    },
+    "PipelineFailed": {
+      "Type": "Fail",
+      "Error": "PipelineFailed",
+      "Cause": "A pipeline step failed. See the notification email and the failed step in the execution graph."
+    }
+  }
+}

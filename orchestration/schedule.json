@@ -1,0 +1,24 @@
+{
+  "ActionAfterCompletion": "NONE",
+  "Arn": "arn:aws:scheduler:us-east-1:<ACCOUNT_ID>:schedule/default/gdrive-pipeline-daily",
+  "CreationDate": "2026-10-10T16:06:10.964000+00:00",
+  "Description": "",
+  "FlexibleTimeWindow": {
+    "Mode": "OFF"
+  },
+  "GroupName": "default",
+  "LastModificationDate": "2026-10-10T16:12:24.686000+00:00",
+  "Name": "gdrive-pipeline-daily",
+  "ScheduleExpression": "cron(0 6 * * ? *)",
+  "ScheduleExpressionTimezone": "America/Chicago",
+  "State": "ENABLED",
+  "Target": {
+    "Arn": "arn:aws:states:us-east-1:<ACCOUNT_ID>:stateMachine:gdrive-medallion-pipeline",
+    "Input": "{}",
+    "RetryPolicy": {
+      "MaximumEventAgeInSeconds": 3600,
+      "MaximumRetryAttempts": 2
+    },
+    "RoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/service-role/Amazon_EventBridge_Scheduler_SFN_05ae0b1bda"
+  }
+}

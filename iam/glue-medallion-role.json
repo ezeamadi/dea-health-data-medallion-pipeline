@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadBronze",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::gdrive-medallion-bronze-<ACCOUNT_ID>",
+        "arn:aws:s3:::gdrive-medallion-bronze-<ACCOUNT_ID>/*"
+      ]
+    },
+    {
+      "Sid": "ReadWriteSilverQuarantineGold",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::gdrive-medallion-silver-<ACCOUNT_ID>",
+        "arn:aws:s3:::gdrive-medallion-silver-<ACCOUNT_ID>/*",
+        "arn:aws:s3:::gdrive-medallion-quarantine-<ACCOUNT_ID>",
+        "arn:aws:s3:::gdrive-medallion-quarantine-<ACCOUNT_ID>/*",
+        "arn:aws:s3:::gdrive-medallion-gold-<ACCOUNT_ID>",
+        "arn:aws:s3:::gdrive-medallion-gold-<ACCOUNT_ID>/*"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "Job": {
+    "Name": "silver-build",
+    "JobMode": "SCRIPT",
+    "JobRunQueuingEnabled": false,
+    "Description": "",
+    "Role": "arn:aws:iam::<ACCOUNT_ID>:role/glue-medallion-role",
+    "CreatedOn": "2026-10-08T12:23:02.611000+00:00",
+    "LastModifiedOn": "2026-10-09T23:11:45.040000+00:00",
+    "ExecutionProperty": {
+      "MaxConcurrentRuns": 1
+    },
+    "Command": {
+      "Name": "glueetl",
+      "ScriptLocation": "s3://aws-glue-assets-<ACCOUNT_ID>-us-east-1/scripts/silver-build.py",
+      "PythonVersion": "3"
+    },
+    "DefaultArguments": {
+      "--BRONZE_BUCKET": "gdrive-medallion-bronze-<ACCOUNT_ID>",
+      "--enable-glue-datacatalog": "",
+      "--job-bookmark-option": "job-bookmark-disable",
+      "--TempDir": "s3://aws-glue-assets-<ACCOUNT_ID>-us-east-1/temporary/",
+      "--SILVER_BUCKET": "gdrive-medallion-silver-<ACCOUNT_ID>",
+      "--enable-metrics": "",
+      "--enable-spark-ui": "true",
+      "--spark-event-logs-path": "s3://aws-glue-assets-<ACCOUNT_ID>-us-east-1/sparkHistoryLogs/",
+      "--enable-job-insights": "true",
+      "--QUARANTINE_BUCKET": "gdrive-medallion-quarantine-<ACCOUNT_ID>",
+      "--QUARANTINE_DB": "gdrive_quarantine",
+      "--DATASET": "ALL",
+      "--enable-observability-metrics": "true",
+      "--conf": "spark.extraListeners=io.openlineage.spark.agent.OpenLineageSparkListener --conf spark.openlineage.transport.type=amazon_datazone_api --conf spark.openlineage.transport.domainId=health-data-analysis --conf spark.glue.accountId=<ACCOUNT_ID> --conf spark.openlineage.facets.custom_environment_variables=[AWS_DEFAULT_REGION;GLUE_VERSION;GLUE_COMMAND_CRITERIA;GLUE_PYTHON_VERSION;] --conf spark.openlineage.columnLineage.datasetLineageEnabled=True --conf spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+      "--enable-continuous-cloudwatch-log": "true",
+      "--job-language": "python",
+      "--enable-auto-scaling": "true",
+      "--SILVER_DB": "gdrive_silver"
+    },
+    "MaxRetries": 0,
+    "AllocatedCapacity": 2,
+    "Timeout": 30,
+    "MaxCapacity": 2.0,
+    "WorkerType": "G.1X",
+    "NumberOfWorkers": 2,
+    "GlueVersion": "6.0",
+    "ExecutionClass": "STANDARD"
+  }
+}

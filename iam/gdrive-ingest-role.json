@@ -1,0 +1,31 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "WriteBronze",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::gdrive-medallion-bronze-<ACCOUNT_ID>",
+        "arn:aws:s3:::gdrive-medallion-bronze-<ACCOUNT_ID>/*"
+      ]
+    },
+    {
+      "Sid": "ReadWriteFileState",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:Scan"
+      ],
+      "Resource": "arn:aws:dynamodb:*:<ACCOUNT_ID>:table/gdrive-file-state"
+    },
+    {
+      "Sid": "ReadGoogleKey",
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "arn:aws:secretsmanager:*:<ACCOUNT_ID>:secret:gdrive/service-account-key-*"
+    }
+  ]
+}

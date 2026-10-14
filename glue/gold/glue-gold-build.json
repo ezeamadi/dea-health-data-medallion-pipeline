@@ -1,0 +1,43 @@
+{
+  "Job": {
+    "Name": "gold-build",
+    "JobMode": "SCRIPT",
+    "JobRunQueuingEnabled": false,
+    "Description": "",
+    "Role": "arn:aws:iam::<ACCOUNT_ID>:role/glue-medallion-role",
+    "CreatedOn": "2026-10-09T23:59:45.023000+00:00",
+    "LastModifiedOn": "2026-10-10T13:54:26.673000+00:00",
+    "ExecutionProperty": {
+      "MaxConcurrentRuns": 1
+    },
+    "Command": {
+      "Name": "glueetl",
+      "ScriptLocation": "s3://aws-glue-assets-<ACCOUNT_ID>-us-east-1/scripts/gold-build.py",
+      "PythonVersion": "3"
+    },
+    "DefaultArguments": {
+      "--enable-glue-datacatalog": "",
+      "--GOLD_DB": "gdrive_gold",
+      "--job-bookmark-option": "job-bookmark-disable",
+      "--TempDir": "s3://aws-glue-assets-<ACCOUNT_ID>-us-east-1/temporary/",
+      "--enable-metrics": "",
+      "--enable-spark-ui": "true",
+      "--TABLES": "gold_facility_quality_staffing,gold_relationship_stats",
+      "--spark-event-logs-path": "s3://aws-glue-assets-<ACCOUNT_ID>-us-east-1/sparkHistoryLogs/",
+      "--enable-job-insights": "true",
+      "--enable-observability-metrics": "true",
+      "--conf": "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+      "--enable-continuous-cloudwatch-log": "true",
+      "--job-language": "python",
+      "--GOLD_BUCKET": "gdrive-medallion-gold-<ACCOUNT_ID>"
+    },
+    "MaxRetries": 0,
+    "AllocatedCapacity": 2,
+    "Timeout": 30,
+    "MaxCapacity": 2.0,
+    "WorkerType": "G.1X",
+    "NumberOfWorkers": 2,
+    "GlueVersion": "6.0",
+    "ExecutionClass": "STANDARD"
+  }
+}
