@@ -44,7 +44,7 @@ QuickSight (Data Visualization)
 
 EventBridge Scheduler (daily, 6:00 AM Chicago)
    --> Step Functions: ingest --> if new files --> Silver --> Gold
-   --> any failure --> SNS email (SNS email)
+   --> any failure --> SNS email
 ```
 
 | Layer  | Contents                                   | Size                                                    |
@@ -113,12 +113,17 @@ See [docs/setup-guide.md](docs/setup-guide.md) for the build in order. Account-s
 ## Data Visualization
 
 The visualization was done with Amazon QuickSight =>
-[docs/images/dashboard-correlation.png](docs/images/dashboard-correlation.png)
-[docs/images/dashboard-ownership.png](docs/images/dashboard-ownership.png)
-[docs/images/dashboard-staffing-vs-occupancy.png](docs/images/dashboard-staffing-vs-occupancy.png)
-[docs/images/dashboard-state-type-1.png](docs/images/dashboard-state-type-1.png)
-[docs/images/dashboard-state-type-2.png](docs/images/dashboard-state-type-2.png)
-[docs/images/dashboard-weekly-trend.png](docs/images/dashboard-weekly-trend.png)
+
+![Correlation Statistics](docs/images/dashboard-correlation.png)
+
+![Staffing by Ownership Types](docs/images/dashboard-ownership.png)
+
+![Staffing vs Occupancy](docs/images/dashboard-staffing-vs-occupancy.png)
+
+![Staffing by State and Types](docs/images/dashboard-state-type-1.png)
+![Staffing by State and Types](docs/images/dashboard-state-type-2.png)
+
+![Weekly Trend](docs/images/dashboard-weekly-trend.png)
 
 ## Limitations
 
