@@ -10,7 +10,7 @@ The pipeline was built through the AWS console, one section at a time. This guid
 
 Region used: us-east-1.
 
-Repository files referenced below: `lambda/lambda_function.py`, `glue/silver_build.py`, `glue/gold_build.py`, `orchestration/state_machine.json`, `iam/*.json`, `sql/*.sql`.
+Repository files referenced below: `lambda/lambda_function.py`, `glue/silver/silver_build.py`, `glue/gold/gold_build.py`, `orchestration/state_machine.json`, `iam/*.json`, `sql/*.sql`.
 
 ## 1. Google Cloud
 
@@ -39,14 +39,14 @@ Repository files referenced below: `lambda/lambda_function.py`, `glue/silver_bui
 
 1. **IAM role** `glue-medallion-role`: managed policy `AWSGlueServiceRole`, plus an inline policy that reads Bronze and reads and writes Silver, quarantine and Gold (see `iam/`).
 2. **Glue databases:** `gdrive_silver`, `gdrive_gold`, `gdrive_quarantine`.
-3. **Job** `silver-build`: Spark, Python, G.1X workers, 2 workers, script `glue/silver_build.py`, with the parameters in `glue/job-settings.md`.
+3. **Job** `silver-build`: Spark, Python, G.1X workers, 2 workers, script `glue/silver/silver_build.py`, with the parameters in `glue/job-settings.md`.
 4. **Build in stages and verify each:** start with `--DATASET pbj_daily_nurse_staffing` (expect 1,325,324 rows), then the provider-info, claims and VBP facility datasets, then the six event tables, then the remaining reference tables. Finally run `--DATASET ALL`.
 5. **Test the circuit breaker** deliberately with a file whose IDs have lost their leading zeros; the job should fail with all rows quarantined.
 6. **Verify** with `sql/01_row_counts_all_tables.sql` (the Silver rows should total 3,421,978).
 
 ## 5. Gold (Glue)
 
-1. **Job** `gold-build`: Spark, Python, G.1X, 2 workers, script `glue/gold_build.py`, with the parameters in `glue/job-settings.md`. Tick the option to use the Glue Data Catalog as the Hive metastore.
+1. **Job** `gold-build`: Spark, Python, G.1X, 2 workers, script `glue/gold/gold_build.py`, with the parameters in `glue/job-settings.md`. Tick the option to use the Glue Data Catalog as the Hive metastore.
 2. **Build the tables in dependency order:** `gold_staffing_daily`, `gold_staffing_facility_monthly`, `gold_staffing_state_monthly`, `gold_staffing_state_ownership`, `gold_facility_quality_staffing`, `gold_relationship_stats`.
 3. **Check each table** before moving on: the build runs its own blocking checks, then compare row counts with `sql/01_row_counts_all_tables.sql`.
 4. **Validate against CMS** using facility 015009 (expected 4.2936).

@@ -1,6 +1,6 @@
 # Gold Data Model
 
-![Gold model](images/gold-model.png)
+![Gold model](images/gold_model.png)
 
 ## Design
 
@@ -69,7 +69,7 @@ Column names as they appear in the queries in `sql/`. For the complete column li
 
 ## Relationship statistics
 
-Six pairs, each with Pearson and Spearman (12 rows), computed after excluding the 30 flagged facilities. Columns include `x_metric`, `y_metric`, `method`, `n_facilities`, `coefficient`, `r_squared` and `slope`. <FILL: the remaining columns, from SHOW COLUMNS>
+Six pairs, each with Pearson and Spearman (12 rows), computed after excluding the 30 flagged facilities. Columns include `x_metric`, `y_metric`, `method`, `n_facilities`, `coefficient`, `r_squared`, `slope`, `relationship_id`, `cy_qtr`, `note` and `built_at`
 
 | x                  | y                          | Pearson r | Spearman r | n      |
 | ------------------ | -------------------------- | --------- | ---------- | ------ |

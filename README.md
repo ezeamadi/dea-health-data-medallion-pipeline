@@ -40,11 +40,11 @@ Glue: gold-build    --->  S3 Gold (6 analysis tables)
         v
 Athena (queries Silver and Gold through the Glue Data Catalog)
         v
-QuickSight (Data Visaualization)
+QuickSight (Data Visualization)
 
 EventBridge Scheduler (daily, 6:00 AM Chicago)
    --> Step Functions: ingest --> if new files --> Silver --> Gold
-   --> any failure --> SNS email (my email)
+   --> any failure --> SNS email (SNS email)
 ```
 
 | Layer  | Contents                                   | Size                                                    |
@@ -90,7 +90,7 @@ Details: [docs/data-quality-rules.md](docs/data-quality-rules.md), [docs/gold-mo
 
 ## How it runs
 
-Every day at 6:00 AM Chicago time, EventBridge starts a Step Functions state machine. It runs the ingest Lambda. If no file changed, it stops. If something changed, it runs `silver-build` (about 9 minutes) and then `gold-build` (about 5 minutes). Any failure sends an email. For the first time it ingests evrything and runs end-to-end.
+Every day at 6:00 AM Chicago time, EventBridge starts a Step Functions state machine. It runs the ingest Lambda. If no file changed, it stops. If something changed, it runs `silver-build` (about 9 minutes) and then `gold-build` (about 5 minutes). Any failure sends an email. For the first time it ingests everything and runs end-to-end.
 
 A forced end-to-end test (one file's DynamoDB record deleted) took about 15 minutes; all 27 Silver and Gold row counts were unchanged afterwards, and the next run ended quietly.
 
@@ -112,7 +112,13 @@ See [docs/setup-guide.md](docs/setup-guide.md) for the build in order. Account-s
 
 ## Data Visualization
 
-The visualization was done with Amazon QuickSight and the images are in [docs/images/](docs/images/)
+The visualization was done with Amazon QuickSight =>
+[docs/images/dashboard-correlation.png](docs/images/dashboard-correlation.png)
+[docs/images/dashboard-ownership.png](docs/images/dashboard-ownership.png)
+[docs/images/dashboard-staffing-vs-occupancy.png](docs/images/dashboard-staffing-vs-occupancy.png)
+[docs/images/dashboard-state-type-1.png](docs/images/dashboard-state-type-1.png)
+[docs/images/dashboard-state-type-2.png](docs/images/dashboard-state-type-2.png)
+[docs/images/dashboard-weekly-trend.png](docs/images/dashboard-weekly-trend.png)
 
 ## Limitations
 
